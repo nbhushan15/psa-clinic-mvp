@@ -75,7 +75,7 @@ st.markdown("""
 .stApp [data-testid="stCaptionContainer"] { color: #17212b !important; }
 .block-container { max-width: 940px; padding-top: 2.5rem; padding-bottom: 3rem; }
 .clinic-hero { background: linear-gradient(125deg, #0d5263, #247589); border-radius: 22px; color: white; padding: 2.25rem 2.4rem; margin-bottom: 1.5rem; }
-.clinic-hero, .clinic-hero * { color: white !important; }
+.stApp .clinic-hero, .stApp .clinic-hero * { color: white !important; }
 .clinic-hero h1 { font-size: 2rem; margin: 0 0 .45rem; }
 .clinic-hero p { margin: 0; opacity: .93; font-size: 1.05rem; }
 div[data-testid="stMetric"] { background: white; border: 1px solid #dfe8ed; border-radius: 14px; padding: .7rem 1rem; }
