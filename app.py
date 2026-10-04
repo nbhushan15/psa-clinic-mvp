@@ -66,7 +66,7 @@ def save_local_record(score: int, answers: dict[str, bool]) -> int:
         return cursor.lastrowid
 
 
-st.set_page_config(page_title="PsA Clinic MVP", page_icon="🩺", layout="wide")
+st.set_page_config(page_title="Look Beyond Skin | PsA Screen", page_icon="🩺", layout="wide")
 st.markdown("""
 <style>
 .stApp { background: #f6f8fb; color: #17212b; }
@@ -82,7 +82,7 @@ div[data-testid="stMetric"] { background: white; border: 1px solid #dfe8ed; bord
 div[role="radiogroup"] { background: white; border: 1px solid #e2e8ee; border-radius: 12px; padding: .35rem .75rem; }
 .screening-note { background: #e8f3f5; border-left: 4px solid #247589; border-radius: 7px; padding: .9rem 1rem; color: #174551; }
 </style>
-<section class="clinic-hero"><h1>Psoriatic Arthritis Screening</h1><p>A short questionnaire for people with psoriasis. Your clinician reviews the result with you.</p></section>
+<section class="clinic-hero"><h1>Look Beyond Skin</h1><p>A short psoriatic arthritis screening questionnaire for people with psoriasis. Your clinician reviews the result with you.</p></section>
 """, unsafe_allow_html=True)
 st.caption("Screening support only — this tool does not diagnose psoriatic arthritis or prescribe treatment.")
 
@@ -135,6 +135,23 @@ with caspar_tab:
         st.metric("Deterministic CASPAR score", f"{total} points", message)
     else:
         st.warning(message)
+
+    if entry:
+        tests_to_consider = []
+        if rf == "Not available":
+            tests_to_consider.append(
+                "**Rheumatoid factor (RF):** record a result if clinically appropriate; a negative RF result contributes to the CASPAR classification score."
+            )
+        if xray == "Not available":
+            tests_to_consider.append(
+                "**Plain radiographs of the hands and/or feet:** consider only if clinically appropriate; CASPAR counts juxta-articular new bone formation on plain radiographs."
+            )
+        if tests_to_consider:
+            st.markdown("#### Tests to consider")
+            st.caption("Clinician prompts only — this app does not order tests or replace clinical assessment.")
+            for test in tests_to_consider:
+                st.markdown(f"- {test}")
+
     reasons = []
     if score >= 3: reasons.append(f"PEST is positive ({score}/5; threshold ≥3/5).")
     if fulfilled: reasons.append(f"CASPAR classification criteria are fulfilled ({total} points; threshold ≥3).")
