@@ -17,13 +17,13 @@ PEST_ITEMS = {
     "dactylitis_history": "Have you had a finger or toe that was completely swollen and painful for no apparent reason?",
 }
 
-GOOGLE_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc6lu4Ew4vadMxZ5Rr3X-aQmSGnYkCRBmVIcB--WAxiOIPtSw/formResponse"
+GOOGLE_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfnz1KbICaredRCN73tFf3Fvrzc4Wbt-0katp9Q4D5clYLVfw/formResponse"
 GOOGLE_FORM_ENTRIES = {
-    "swollen_joint": "entry.1679185626",
-    "doctor_arthritis": "entry.751831872",
-    "nail_pitting": "entry.1462993322",
-    "heel_pain": "entry.1281512710",
-    "dactylitis_history": "entry.530109406",
+    "swollen_joint": "entry.920246852",
+    "doctor_arthritis": "entry.689126709",
+    "nail_pitting": "entry.2040305267",
+    "heel_pain": "entry.1460286880",
+    "dactylitis_history": "entry.1951837391",
 }
 
 
@@ -44,7 +44,7 @@ def send_pest_to_google_form(answers: dict[str, bool]) -> None:
     payload = {GOOGLE_FORM_ENTRIES["swollen_joint"]: "Yes" if answers["swollen_joint"] else "No"}
     for key in ("doctor_arthritis", "nail_pitting", "heel_pain", "dactylitis_history"):
         if answers[key]:
-            payload[GOOGLE_FORM_ENTRIES[key]] = "Option 1"
+            payload[GOOGLE_FORM_ENTRIES[key]] = "Yes"
     request = urllib.request.Request(
         GOOGLE_FORM_RESPONSE_URL,
         data=urllib.parse.urlencode(payload).encode("utf-8"),
