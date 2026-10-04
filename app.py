@@ -69,10 +69,14 @@ def save_local_record(score: int, answers: dict[str, bool]) -> int:
 st.set_page_config(page_title="PsA Clinic MVP", page_icon="🩺", layout="wide")
 st.markdown("""
 <style>
-.stApp { background: #f6f8fb; }
+.stApp { background: #f6f8fb; color: #17212b; }
+.stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5,
+.stApp label, .stApp span, .stApp [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stCaptionContainer"] { color: #17212b !important; }
 .block-container { max-width: 940px; padding-top: 2.5rem; padding-bottom: 3rem; }
 .clinic-hero { background: linear-gradient(125deg, #0d5263, #247589); border-radius: 22px; color: white; padding: 2.25rem 2.4rem; margin-bottom: 1.5rem; }
-.clinic-hero h1 { color: white; font-size: 2rem; margin: 0 0 .45rem; }
+.clinic-hero, .clinic-hero * { color: white !important; }
+.clinic-hero h1 { font-size: 2rem; margin: 0 0 .45rem; }
 .clinic-hero p { margin: 0; opacity: .93; font-size: 1.05rem; }
 div[data-testid="stMetric"] { background: white; border: 1px solid #dfe8ed; border-radius: 14px; padding: .7rem 1rem; }
 div[role="radiogroup"] { background: white; border: 1px solid #e2e8ee; border-radius: 12px; padding: .35rem .75rem; }
