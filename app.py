@@ -19,6 +19,7 @@ PEST_ITEMS = {
 
 GOOGLE_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfnz1KbICaredRCN73tFf3Fvrzc4Wbt-0katp9Q4D5clYLVfw/formResponse"
 GOOGLE_FORM_ENTRIES = {
+    "uhid": "entry.1157237787",
     "swollen_joint": "entry.920246852",
     "doctor_arthritis": "entry.689126709",
     "nail_pitting": "entry.2040305267",
@@ -42,12 +43,11 @@ def caspar_score(entry: bool, answers: dict[str, bool]) -> tuple[bool, int, str]
     return total >= 3, total, "CASPAR classification criteria fulfilled" if total >= 3 else "CASPAR classification criteria not fulfilled"
 
 
-def send_pest_to_google_form(answers: dict[str, bool]) -> None:
-    """Submit anonymous PEST answers. Google Form choice fields record Yes; blank means No."""
-    payload = {GOOGLE_FORM_ENTRIES["swollen_joint"]: "Yes" if answers["swollen_joint"] else "No"}
-    for key in ("doctor_arthritis", "nail_pitting", "heel_pain", "dactylitis_history"):
-        if answers[key]:
-            payload[GOOGLE_FORM_ENTRIES[key]] = "Yes"
+def send_pest_to_google_form(uhid: str, answers: dict[str, bool]) -> None:
+    """Submit the UHID and PEST answers to the clinic response form."""
+    payload = {GOOGLE_FORM_ENTRIES["uhid"]: uhid}
+    for key in PEST_ITEMS:
+        payload[GOOGLE_FORM_ENTRIES[key]] = "Yes" if answers[key] else "No"
     request = urllib.request.Request(
         GOOGLE_FORM_RESPONSE_URL,
         data=urllib.parse.urlencode(payload).encode("utf-8"),
@@ -59,12 +59,17 @@ def send_pest_to_google_form(answers: dict[str, bool]) -> None:
             raise RuntimeError("Google Form did not accept the screening.")
 
 
-def save_local_record(score: int, answers: dict[str, bool]) -> int:
+def save_local_record(uhid: str, score: int, answers: dict[str, bool]) -> int:
     with sqlite3.connect(Path("psa_mvp.sqlite")) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS screenings (id INTEGER PRIMARY KEY, created_at TEXT, pest_score INTEGER, pest_answers TEXT)")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS screenings (id INTEGER PRIMARY KEY, created_at TEXT, uhid TEXT, pest_score INTEGER, pest_answers TEXT)"
+        )
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(screenings)")}
+        if "uhid" not in columns:
+            conn.execute("ALTER TABLE screenings ADD COLUMN uhid TEXT")
         cursor = conn.execute(
-            "INSERT INTO screenings VALUES (NULL, ?, ?, ?)",
-            (date.today().isoformat(), score, json.dumps(answers)),
+            "INSERT INTO screenings (created_at, uhid, pest_score, pest_answers) VALUES (?, ?, ?, ?)",
+            (date.today().isoformat(), uhid, score, json.dumps(answers)),
         )
         return cursor.lastrowid
 
@@ -107,7 +112,8 @@ screening_tab, caspar_tab, clinical_tests_tab = st.tabs(
 
 with screening_tab:
     st.subheader("Your five questions")
-    st.markdown("<div class='screening-note'>Please answer based on symptoms you have had at any time. There are no right or wrong answers.</div>", unsafe_allow_html=True)
+    uhid = st.text_input("UHID", placeholder="Enter UHID", max_chars=64)
+    st.markdown("<div class='screening-note'>Please enter your UHID, then answer based on symptoms you have had at any time. There are no right or wrong answers.</div>", unsafe_allow_html=True)
     st.write("")
     answers = {}
     for number, (key, question) in enumerate(PEST_ITEMS.items(), start=1):
@@ -136,12 +142,15 @@ with screening_tab:
             st.info("Your score is below 3. Your dermatologist will interpret this alongside your symptoms and examination.")
     st.caption("PEST scoring is calculated automatically. A score of 3/5 or more is a positive screen; it is not a diagnosis.")
     if st.button("Submit screening", type="primary", use_container_width=True):
-        try:
-            send_pest_to_google_form(answers)
-            record_id = save_local_record(score, answers)
-            st.success(f"Thank you. Your anonymous screening was submitted to the clinic response form. Local record #{record_id} was also created.")
-        except Exception:
-            st.error("The screening could not be submitted to the clinic response form. Please tell the clinic staff and do not re-enter personal details.")
+        if not uhid.strip():
+            st.error("Please enter the UHID before submitting the screening.")
+        else:
+            try:
+                send_pest_to_google_form(uhid.strip(), answers)
+                record_id = save_local_record(uhid.strip(), score, answers)
+                st.success(f"Thank you. Your screening was submitted to the clinic response form. Local record #{record_id} was also created.")
+            except Exception:
+                st.error("The screening could not be submitted to the clinic response form. Please tell the clinic staff.")
 
 with caspar_tab:
     st.subheader("CASPAR and Psoriasis Severity")
@@ -249,4 +258,4 @@ with clinical_tests_tab:
     )
 
 st.divider()
-st.caption("Anonymous answers are sent to the clinic's Google Form when the patient submits the PEST screen. Do not enter identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.")
+st.caption("Your UHID and screening answers are sent to the clinic's Google Form when the patient submits the PEST screen. Do not enter any other identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.")
