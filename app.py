@@ -175,48 +175,49 @@ with clinical_tests_tab:
     psoriasis_tests, psa_tests = st.tabs(["Psoriasis", "Suspected or established PsA"])
 
     with psoriasis_tests:
-        st.markdown("#### Psoriasis: general health and treatment planning")
+        st.markdown("#### Clinic standard: every psoriasis patient")
         st.markdown(
-            "Routine blood tests are not required solely because a person has psoriasis. Select testing according to disease severity, comorbidity risk, treatment, and local pathways."
+            "The following are the clinic’s standard assessment tests for all psoriasis patients."
         )
         st.markdown(
-            "- **Cardiometabolic review:** document blood pressure and body weight/BMI; consider cardiovascular-risk assessment, with a lipid profile and glucose/HbA1c when indicated by the person’s risk assessment or local pathway."
+            "- **Complete blood count (CBC)**"
         )
         st.markdown(
-            "- **Severe psoriasis:** offer cardiovascular-risk assessment at presentation and repeat it at least every 5 years, or sooner when the clinical result indicates."
+            "- **Lipid profile**"
         )
         st.markdown(
-            "- **Severe or atypical psoriasis:** consider HIV testing with consent and in line with the local HIV-testing pathway."
+            "- **Liver function tests (LFT)**"
         )
         st.markdown(
-            "- **Before systemic or biologic treatment:** use the selected medicine’s prescribing information and hospital protocol to choose safety laboratory tests and infection screening. Common examples may include full blood count, liver/renal function, and infection screening, but these are medicine- and patient-specific rather than universal psoriasis tests."
+            "- **HbA1c**"
         )
-        st.info("Do not use this checklist as a substitute for the clinic’s treatment-specific monitoring protocol.")
+        st.info("Add treatment-specific monitoring and any additional investigations according to the dermatologist’s assessment and local protocol.")
 
     with psa_tests:
-        st.markdown("#### Suspected or established psoriatic arthritis")
+        st.markdown("#### Clinic standard: suspected psoriatic arthritis")
         st.markdown(
-            "- **Rheumatoid factor (RF):** consider when synovitis or rheumatoid arthritis is in the differential diagnosis; a documented negative result is one CASPAR component. ‘Not available’ is not negative and receives no CASPAR point. Consider anti-CCP only when rheumatoid arthritis is clinically suspected."
+            "The following are added when PsA is suspected."
         )
         st.markdown(
-            "- **CRP and ESR:** may support assessment of inflammatory activity, but normal results do not rule out spondyloarthritis or PsA."
+            "- **Rheumatoid factor (RF)** — a documented negative result is one CASPAR component; ‘Not available’ is not negative and receives no CASPAR point."
         )
         st.markdown(
-            "- **Plain radiographs:** consider symptomatic hands and feet when peripheral spondyloarthritis is suspected; CASPAR specifically records juxta-articular new bone formation."
+            "- **C-reactive protein (CRP)**"
         )
         st.markdown(
-            "- **Ultrasound or MRI:** consider when the diagnosis remains unclear, for suspected enthesitis/joint involvement, or for symptomatic peripheral or axial sites."
+            "- **Erythrocyte sedimentation rate (ESR)**"
         )
         st.markdown(
-            "- **HLA-B27 and sacroiliac imaging:** reserve for a clinically appropriate axial-spondyloarthritis pattern; neither a negative HLA-B27 result nor normal inflammatory markers excludes the diagnosis."
+            "- **Ultrasound or X-ray**, selected for the clinically relevant symptomatic site."
         )
         st.markdown(
-            "- **Before disease-modifying therapy:** follow rheumatology and local medication-monitoring protocols; this app does not select therapy or order pre-treatment testing."
+            "Normal CRP or ESR does not exclude PsA. Further investigations remain at the dermatologist’s or rheumatologist’s discretion."
         )
         st.warning("Prompt rheumatology assessment remains appropriate when PsA is suspected; do not delay referral while waiting for this checklist.")
 
     st.caption(
-        f"Sources: [NICE psoriasis assessment and management]({PSORIASIS_GUIDELINE_URL}) and "
+        "The test lists above are a local clinic workflow. Clinical reference context: "
+        f"[NICE psoriasis assessment and management]({PSORIASIS_GUIDELINE_URL}) and "
         f"[NICE spondyloarthritis diagnosis and management]({SPONDYLOARTHRITIS_GUIDELINE_URL})."
     )
 
