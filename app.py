@@ -36,7 +36,7 @@ def pest_score(answers: dict[str, bool]) -> int:
 
 def caspar_score(entry: bool, answers: dict[str, bool]) -> tuple[bool, int, str]:
     if not entry:
-        return False, 0, "Disabled: first explicitly document inflammatory articular disease (joint, spine or enthesitis)."
+        return False, 0, "Confirm the clinical context to calculate CASPAR."
     psoriasis = 2 if answers["current_psoriasis"] else (1 if answers["personal_psoriasis"] or answers["family_psoriasis"] else 0)
     total = psoriasis + sum(bool(answers[k]) for k in ["nail_dystrophy", "negative_rf", "dactylitis", "new_bone"])
     return total >= 3, total, "CASPAR classification criteria fulfilled" if total >= 3 else "CASPAR classification criteria not fulfilled"
@@ -147,7 +147,10 @@ with caspar_tab:
     st.subheader("CASPAR and Psoriasis Severity")
     st.caption("Classification support only. This screen does not diagnose PsA or make a referral decision.")
     severity = st.selectbox("Psoriasis Severity (local clinic recording)", ["Not recorded", "Mild", "Moderate", "Severe", "Clinically relevant to patient"])
-    entry = st.radio("CASPAR entry criterion: inflammatory articular disease (joint, spine, or enthesitis) explicitly present?", ["No / not established", "Yes"], horizontal=True) == "Yes"
+    entry = st.checkbox(
+        "Clinician confirmation: inflammatory joint, spine, or entheseal disease is established",
+        help="CASPAR classification applies only in this clinical context.",
+    )
     st.markdown("#### CASPAR classification module")
     rf = st.radio("Rheumatoid factor result", ["Negative", "Positive", "Not available"], index=2, horizontal=True, disabled=not entry)
     xray = st.radio("X-ray: juxta-articular new bone formation", ["Present", "Absent", "Not available"], index=2, horizontal=True, disabled=not entry)
