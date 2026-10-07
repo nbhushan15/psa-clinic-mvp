@@ -26,6 +26,9 @@ GOOGLE_FORM_ENTRIES = {
     "dactylitis_history": "entry.1951837391",
 }
 
+PSORIASIS_GUIDELINE_URL = "https://www.nice.org.uk/guidance/cg153/chapter/recommendations"
+SPONDYLOARTHRITIS_GUIDELINE_URL = "https://www.nice.org.uk/guidance/ng65/chapter/Recommendations"
+
 
 def pest_score(answers: dict[str, bool]) -> int:
     return sum(bool(answers.get(key, False)) for key in PEST_ITEMS)
@@ -86,7 +89,9 @@ div[role="radiogroup"] { background: white; border: 1px solid #e2e8ee; border-ra
 """, unsafe_allow_html=True)
 st.caption("Screening support only — this tool does not diagnose psoriatic arthritis or prescribe treatment.")
 
-screening_tab, caspar_tab = st.tabs(["Patient screening", "CASPAR & psoriasis severity"])
+screening_tab, caspar_tab, clinical_tests_tab = st.tabs(
+    ["Patient screening", "CASPAR & psoriasis severity", "Clinical test prompts"]
+)
 
 with screening_tab:
     st.subheader("Your five questions")
@@ -161,6 +166,56 @@ with caspar_tab:
         st.caption("Decision support only. The clinician remains responsible for the referral decision.")
     else:
         st.info("No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.")
+
+with clinical_tests_tab:
+    st.subheader("Tests to consider")
+    st.caption(
+        "Clinician use only. These are prompts for assessment and local pathways — they are not automatic orders, a diagnosis, or a treatment plan."
+    )
+    psoriasis_tests, psa_tests = st.tabs(["Psoriasis", "Suspected or established PsA"])
+
+    with psoriasis_tests:
+        st.markdown("#### Psoriasis: general health and treatment planning")
+        st.markdown(
+            "- **Cardiometabolic review:** document blood pressure and body weight/BMI; consider cardiovascular-risk assessment, with a lipid profile and glucose/HbA1c when indicated by the person’s risk assessment or local pathway."
+        )
+        st.markdown(
+            "- **Severe psoriasis:** offer cardiovascular-risk assessment at presentation and repeat it according to the clinical result and local pathway."
+        )
+        st.markdown(
+            "- **Before systemic or biologic treatment:** use the selected medicine’s prescribing information and hospital protocol to choose safety laboratory tests and infection screening. Common examples may include full blood count, liver/renal function, and infection screening, but these are medicine- and patient-specific rather than universal psoriasis tests."
+        )
+        st.markdown(
+            "- **Other targeted tests:** choose these only for a clinical indication, such as a specific comorbidity, atypical/severe disease, treatment safety concern, or relevant history."
+        )
+        st.info("Do not use this checklist as a substitute for the clinic’s treatment-specific monitoring protocol.")
+
+    with psa_tests:
+        st.markdown("#### Suspected or established psoriatic arthritis")
+        st.markdown(
+            "- **Rheumatoid factor (RF):** consider when clinically appropriate; a negative result is one CASPAR classification component."
+        )
+        st.markdown(
+            "- **CRP and ESR:** may support assessment of inflammatory activity, but normal results do not rule out spondyloarthritis or PsA."
+        )
+        st.markdown(
+            "- **Plain radiographs:** consider symptomatic hands and feet when peripheral spondyloarthritis is suspected; CASPAR specifically records juxta-articular new bone formation."
+        )
+        st.markdown(
+            "- **Ultrasound or MRI:** consider when the diagnosis remains unclear, for suspected enthesitis/joint involvement, or for symptomatic peripheral or axial sites."
+        )
+        st.markdown(
+            "- **HLA-B27 and sacroiliac imaging:** reserve for a clinically appropriate axial-spondyloarthritis pattern; neither a negative HLA-B27 result nor normal inflammatory markers excludes the diagnosis."
+        )
+        st.markdown(
+            "- **Before disease-modifying therapy:** follow rheumatology and local medication-monitoring protocols; this app does not select therapy or order pre-treatment testing."
+        )
+        st.warning("Prompt rheumatology assessment remains appropriate when PsA is suspected; do not delay referral while waiting for this checklist.")
+
+    st.caption(
+        f"Sources: [NICE psoriasis assessment and management]({PSORIASIS_GUIDELINE_URL}) and "
+        f"[NICE spondyloarthritis diagnosis and management]({SPONDYLOARTHRITIS_GUIDELINE_URL})."
+    )
 
 st.divider()
 st.caption("Anonymous answers are sent to the clinic's Google Form when the patient submits the PEST screen. Do not enter identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.")
