@@ -35,12 +35,10 @@ def pest_score(answers: dict[str, bool]) -> int:
     return sum(bool(answers.get(key, False)) for key in PEST_ITEMS)
 
 
-def caspar_score(entry: bool, answers: dict[str, bool]) -> tuple[bool, int, str]:
-    if not entry:
-        return False, 0, "Confirm the clinical context to calculate CASPAR."
+def caspar_score(answers: dict[str, bool]) -> tuple[bool, int, str]:
     psoriasis = 2 if answers["current_psoriasis"] else (1 if answers["personal_psoriasis"] or answers["family_psoriasis"] else 0)
     total = psoriasis + sum(bool(answers[k]) for k in ["nail_dystrophy", "negative_rf", "dactylitis", "new_bone"])
-    return total >= 3, total, "CASPAR classification criteria fulfilled" if total >= 3 else "CASPAR classification criteria not fulfilled"
+    return total >= 3, total, "CASPAR point threshold met (≥3); clinician interpretation required" if total >= 3 else "CASPAR point threshold not met"
 
 
 def send_pest_to_google_form(uhid: str, answers: dict[str, bool]) -> None:
@@ -154,48 +152,41 @@ with screening_tab:
 
 with caspar_tab:
     st.subheader("CASPAR and Psoriasis Severity")
-    st.caption("Classification support only. This screen does not diagnose PsA or make a referral decision.")
+    st.caption("Classification support only — CASPAR is not a diagnosis. Scores require clinician interpretation in the appropriate inflammatory musculoskeletal context.")
     severity = st.selectbox("Psoriasis Severity (local clinic recording)", ["Not recorded", "Mild", "Moderate", "Severe", "Clinically relevant to patient"])
-    entry = st.checkbox(
-        "Clinician confirmation: inflammatory joint, spine, or entheseal disease is established",
-        help="CASPAR classification applies only in this clinical context.",
-    )
+    st.info("Interpret CASPAR only in established inflammatory joint, spine, or entheseal disease.")
     st.markdown("#### CASPAR classification module")
-    rf = st.radio("Rheumatoid factor result", ["Negative", "Positive", "Not available"], index=2, horizontal=True, disabled=not entry)
-    xray = st.radio("X-ray: juxta-articular new bone formation", ["Present", "Absent", "Not available"], index=2, horizontal=True, disabled=not entry)
+    rf = st.radio("Rheumatoid factor result", ["Negative", "Positive", "Not available"], index=2, horizontal=True)
+    xray = st.radio("X-ray: juxta-articular new bone formation", ["Present", "Absent", "Not available"], index=2, horizontal=True)
     caspar_answers = {
-        "current_psoriasis": st.checkbox("Current Psoriasis (2 points)", disabled=not entry),
-        "personal_psoriasis": st.checkbox("Personal History of Psoriasis (1 point if no Current Psoriasis)", disabled=not entry),
-        "family_psoriasis": st.checkbox("Family History of Psoriasis (1 point if no Current/Personal History)", disabled=not entry),
-        "nail_dystrophy": st.checkbox("Psoriatic Nail Dystrophy: pitting, onycholysis, or hyperkeratosis (1 point)", disabled=not entry),
-        "negative_rf": rf == "Negative", "dactylitis": st.checkbox("Current dactylitis or recorded history (1 point)", disabled=not entry),
+        "current_psoriasis": st.checkbox("Current Psoriasis (2 points)"),
+        "personal_psoriasis": st.checkbox("Personal History of Psoriasis (1 point if no Current Psoriasis)"),
+        "family_psoriasis": st.checkbox("Family History of Psoriasis (1 point if no Current/Personal History)"),
+        "nail_dystrophy": st.checkbox("Psoriatic Nail Dystrophy: pitting, onycholysis, or hyperkeratosis (1 point)"),
+        "negative_rf": rf == "Negative", "dactylitis": st.checkbox("Current dactylitis or recorded history (1 point)"),
         "new_bone": xray == "Present",
     }
-    fulfilled, total, message = caspar_score(entry, caspar_answers)
-    if entry:
-        st.metric("Deterministic CASPAR score", f"{total} points", message)
-    else:
-        st.warning(message)
+    fulfilled, total, message = caspar_score(caspar_answers)
+    st.metric("Deterministic CASPAR score", f"{total} points", message)
 
-    if entry:
-        tests_to_consider = []
-        if rf == "Not available":
-            tests_to_consider.append(
-                "**Rheumatoid factor (RF):** record a result if clinically appropriate; a negative RF result contributes to the CASPAR classification score."
-            )
-        if xray == "Not available":
-            tests_to_consider.append(
-                "**Plain radiographs of the hands and/or feet:** consider only if clinically appropriate; CASPAR counts juxta-articular new bone formation on plain radiographs."
-            )
-        if tests_to_consider:
-            st.markdown("#### Tests to consider")
-            st.caption("Clinician prompts only — this app does not order tests or replace clinical assessment.")
-            for test in tests_to_consider:
-                st.markdown(f"- {test}")
+    tests_to_consider = []
+    if rf == "Not available":
+        tests_to_consider.append(
+            "**Rheumatoid factor (RF):** record a result if clinically appropriate; a negative RF result contributes to the CASPAR classification score."
+        )
+    if xray == "Not available":
+        tests_to_consider.append(
+            "**Plain radiographs of the hands and/or feet:** consider only if clinically appropriate; CASPAR counts juxta-articular new bone formation on plain radiographs."
+        )
+    if tests_to_consider:
+        st.markdown("#### Tests to consider")
+        st.caption("Clinician prompts only — this app does not order tests or replace clinical assessment.")
+        for test in tests_to_consider:
+            st.markdown(f"- {test}")
 
     reasons = []
     if score >= 3: reasons.append(f"PEST is positive ({score}/5; threshold ≥3/5).")
-    if fulfilled: reasons.append(f"CASPAR classification criteria are fulfilled ({total} points; threshold ≥3).")
+    if fulfilled: reasons.append(f"CASPAR point threshold is met ({total} points; threshold ≥3); clinician interpretation is required.")
     st.markdown("#### Referral prompt")
     if reasons:
         st.success("Refer to rheumatology for clinician assessment. " + " ".join(f"- {reason}" for reason in reasons))
