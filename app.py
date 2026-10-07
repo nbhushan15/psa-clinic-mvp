@@ -177,23 +177,26 @@ with clinical_tests_tab:
     with psoriasis_tests:
         st.markdown("#### Psoriasis: general health and treatment planning")
         st.markdown(
+            "Routine blood tests are not required solely because a person has psoriasis. Select testing according to disease severity, comorbidity risk, treatment, and local pathways."
+        )
+        st.markdown(
             "- **Cardiometabolic review:** document blood pressure and body weight/BMI; consider cardiovascular-risk assessment, with a lipid profile and glucose/HbA1c when indicated by the person’s risk assessment or local pathway."
         )
         st.markdown(
-            "- **Severe psoriasis:** offer cardiovascular-risk assessment at presentation and repeat it according to the clinical result and local pathway."
+            "- **Severe psoriasis:** offer cardiovascular-risk assessment at presentation and repeat it at least every 5 years, or sooner when the clinical result indicates."
+        )
+        st.markdown(
+            "- **Severe or atypical psoriasis:** consider HIV testing with consent and in line with the local HIV-testing pathway."
         )
         st.markdown(
             "- **Before systemic or biologic treatment:** use the selected medicine’s prescribing information and hospital protocol to choose safety laboratory tests and infection screening. Common examples may include full blood count, liver/renal function, and infection screening, but these are medicine- and patient-specific rather than universal psoriasis tests."
-        )
-        st.markdown(
-            "- **Other targeted tests:** choose these only for a clinical indication, such as a specific comorbidity, atypical/severe disease, treatment safety concern, or relevant history."
         )
         st.info("Do not use this checklist as a substitute for the clinic’s treatment-specific monitoring protocol.")
 
     with psa_tests:
         st.markdown("#### Suspected or established psoriatic arthritis")
         st.markdown(
-            "- **Rheumatoid factor (RF):** consider when clinically appropriate; a negative result is one CASPAR classification component."
+            "- **Rheumatoid factor (RF):** consider when synovitis or rheumatoid arthritis is in the differential diagnosis; a documented negative result is one CASPAR component. ‘Not available’ is not negative and receives no CASPAR point. Consider anti-CCP only when rheumatoid arthritis is clinically suspected."
         )
         st.markdown(
             "- **CRP and ESR:** may support assessment of inflammatory activity, but normal results do not rule out spondyloarthritis or PsA."
