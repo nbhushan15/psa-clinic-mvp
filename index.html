@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; form-action https://docs.google.com; frame-src https://docs.google.com; base-uri 'none'; object-src 'none'; connect-src 'none'">
+  <title>Look Beyond Skin | PsA Screen</title>
+  <style>
+    :root {
+      --teal: #0d5967;
+      --teal-deep: #094852;
+      --teal-soft: #e7f4f4;
+      --surface: #ffffff;
+      --page: #f8fafb;
+      --ink: #18262b;
+      --muted: #53666d;
+      --border: #dce5e7;
+      --warning: #8a5a00;
+      --warning-bg: #fff7df;
+      --success: #145d45;
+      --success-bg: #eaf7f0;
+      --info-bg: #edf7fb;
+      --info: #17566f;
+      --danger: #9a2e2e;
+      --danger-bg: #fff0f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--page);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid #86c8d0;
+      outline-offset: 2px;
+    }
+
+    .app-shell { width: min(100% - 2rem, 800px); margin: 0 auto; padding: 1.5rem 0 3rem; }
+    .clinic-hero { background: var(--teal); border-radius: 16px; color: #fff; padding: 1.6rem 1.75rem; }
+    .eyebrow { margin: 0 0 .45rem; font-size: .72rem; font-weight: 750; letter-spacing: .13em; opacity: .85; }
+    h1 { margin: 0 0 .35rem; font-size: clamp(2rem, 6vw, 2.45rem); letter-spacing: -.03em; line-height: 1.1; }
+    .clinic-hero p { margin: 0; font-size: 1rem; opacity: .92; }
+    .global-note, .footer-note { margin: .9rem 0 1.1rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+
+    .tab-list { display: flex; gap: .2rem; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
+    .tab { flex: 0 0 auto; appearance: none; border: 0; border-bottom: 3px solid transparent; padding: .78rem .85rem .68rem; background: transparent; color: var(--muted); font-weight: 700; }
+    .tab[aria-selected="true"] { color: var(--teal); border-bottom-color: var(--teal); }
+    .tab-panel[hidden] { display: none; }
+
+    h2 { margin: 0 0 .4rem; font-size: 1.36rem; letter-spacing: -.015em; }
+    h3 { margin: 1.55rem 0 .65rem; font-size: 1.05rem; }
+    .caption { margin: 0 0 1rem; color: var(--muted); font-size: .86rem; line-height: 1.48; }
+    .screening-note, .notice { border-radius: 12px; padding: .82rem 1rem; font-size: .94rem; line-height: 1.48; }
+    .screening-note { background: #eef7f7; border: 1px solid #d5e9ea; color: #194550; margin: .85rem 0 1rem; }
+    .notice { margin: .85rem 0; border: 1px solid transparent; }
+    .notice.info { color: var(--info); background: var(--info-bg); border-color: #cfe8f2; }
+    .notice.warning { color: var(--warning); background: var(--warning-bg); border-color: #f2dfaa; }
+    .notice.success { color: var(--success); background: var(--success-bg); border-color: #cdebdc; }
+    .notice.error { color: var(--danger); background: var(--danger-bg); border-color: #f1c9c9; }
+    .notice[hidden] { display: none; }
+
+    .field-label { display: block; margin: 0 0 .42rem; font-weight: 700; }
+    .input { width: 100%; border: 1px solid #cbd9dc; border-radius: 10px; background: var(--surface); padding: .72rem .82rem; color: var(--ink); }
+    .input:focus { border-color: var(--teal); }
+    .question-card { display: grid; grid-template-columns: 2.15rem 1fr; gap: .82rem; margin: 0 0 .8rem; padding: .95rem; background: var(--surface); border: 1px solid #e2e8ea; border-radius: 15px; }
+    .question-number { width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 999px; background: var(--teal-soft); color: var(--teal); font-size: .8rem; font-weight: 800; }
+    .question-card fieldset, .caspar-control { min-width: 0; margin: 0; padding: 0; border: 0; }
+    legend, .question-text { margin: 0 0 .62rem; font-weight: 700; line-height: 1.45; }
+    .choice-row { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .choice { display: inline-flex; align-items: center; gap: .42rem; min-height: 2.35rem; padding: .36rem .72rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+    .choice:has(input:checked) { border-color: #0d6876; background: var(--teal-soft); }
+    .choice input { margin: 0; accent-color: var(--teal); }
+
+    .score-grid { display: grid; grid-template-columns: minmax(135px, 1fr) 2fr; gap: .85rem; align-items: stretch; margin: 1rem 0 .55rem; }
+    .score-card { padding: .85rem 1rem; border: 1px solid #d4e9e9; border-radius: 14px; background: #f0f8f8; }
+    .score-card span { display: block; color: var(--muted); font-size: .76rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+    .score-card strong { display: block; margin-top: .12rem; color: var(--teal); font-size: 1.55rem; line-height: 1.2; }
+    .score-grid .notice { margin: 0; }
+    .primary-button { width: 100%; margin-top: .8rem; border: 0; border-radius: 10px; background: var(--teal); color: #fff; padding: .78rem 1rem; font-weight: 750; }
+    .primary-button:hover { background: var(--teal-deep); }
+
+    .select-wrap { margin: .85rem 0 1rem; }
+    .check-list { display: grid; gap: .58rem; }
+    .check-row { display: flex; align-items: flex-start; gap: .6rem; padding: .68rem .72rem; border: 1px solid var(--border); border-radius: 11px; background: var(--surface); line-height: 1.42; }
+    .check-row input { flex: 0 0 auto; margin: .17rem 0 0; accent-color: var(--teal); }
+    .caspar-score { margin: 1rem 0 .4rem; padding: 1rem; border: 1px solid #d4e9e9; border-radius: 14px; background: #f0f8f8; }
+    .caspar-score .value { display: block; margin: .12rem 0 .25rem; color: var(--teal); font-size: 1.65rem; font-weight: 800; }
+    .caspar-score .message { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+    .test-prompts { margin-top: 1rem; }
+    .test-prompts[hidden] { display: none; }
+    .test-prompts ul, .test-list { margin: .45rem 0; padding-left: 1.3rem; line-height: 1.65; }
+    .test-block { padding: .95rem 1rem; margin: .8rem 0; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+    .test-block h3 { margin: 0 0 .4rem; }
+    .test-block p { margin: .25rem 0 .6rem; color: var(--muted); line-height: 1.48; }
+    .footer-note { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 2rem; }
+    a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      .app-shell { width: min(100% - 1.25rem, 800px); padding-top: .7rem; }
+      .clinic-hero { padding: 1.35rem 1.2rem; border-radius: 14px; }
+      .score-grid { grid-template-columns: 1fr; }
+      .question-card { grid-template-columns: 2rem 1fr; padding: .82rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="clinic-hero">
+      <p class="eyebrow">JOINT HEALTH CHECK</p>
+      <h1>Look Beyond Skin</h1>
+      <p>A short Psoriatic Arthritis screening questionnaire for people with Psoriasis.</p>
+    </header>
+    <p class="global-note">Screening support only — this tool does not diagnose psoriatic arthritis or prescribe treatment.</p>
+
+    <div class="tab-list" role="tablist" aria-label="Psoriatic Arthritis screening sections">
+      <button class="tab" id="tab-screening" type="button" role="tab" aria-selected="true" aria-controls="panel-screening">Screening</button>
+      <button class="tab" id="tab-caspar" type="button" role="tab" aria-selected="false" aria-controls="panel-caspar">CASPAR &amp; Psoriasis</button>
+      <button class="tab" id="tab-tests" type="button" role="tab" aria-selected="false" aria-controls="panel-tests">Tests to consider</button>
+    </div>
+
+    <section class="tab-panel" id="panel-screening" role="tabpanel" aria-labelledby="tab-screening">
+      <h2>Your five questions</h2>
+      <form id="screening-form" novalidate>
+        <label class="field-label" for="uhid">UHID</label>
+        <input class="input" id="uhid" name="uhid" type="text" placeholder="Enter UHID" maxlength="64" autocomplete="off">
+        <p class="screening-note">Please enter your UHID, then answer based on symptoms you have had at any time. There are no right or wrong answers.</p>
+
+        <div class="question-card">
+          <span class="question-number" aria-hidden="true">01</span>
+          <fieldset>
+            <legend>Have you ever had a swollen joint (or joints)?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="swollen_joint" value="No" checked> No</label>
+              <label class="choice"><input type="radio" name="swollen_joint" value="Yes"> Yes</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="question-card">
+          <span class="question-number" aria-hidden="true">02</span>
+          <fieldset>
+            <legend>Has a doctor ever told you that you have arthritis?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="doctor_arthritis" value="No" checked> No</label>
+              <label class="choice"><input type="radio" name="doctor_arthritis" value="Yes"> Yes</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="question-card">
+          <span class="question-number" aria-hidden="true">03</span>
+          <fieldset>
+            <legend>Do your finger nails or toenails have holes or pits?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="nail_pitting" value="No" checked> No</label>
+              <label class="choice"><input type="radio" name="nail_pitting" value="Yes"> Yes</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="question-card">
+          <span class="question-number" aria-hidden="true">04</span>
+          <fieldset>
+            <legend>Have you had pain in your heel?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="heel_pain" value="No" checked> No</label>
+              <label class="choice"><input type="radio" name="heel_pain" value="Yes"> Yes</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="question-card">
+          <span class="question-number" aria-hidden="true">05</span>
+          <fieldset>
+            <legend>Have you had a finger or toe that was completely swollen and painful for no apparent reason?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="dactylitis_history" value="No" checked> No</label>
+              <label class="choice"><input type="radio" name="dactylitis_history" value="Yes"> Yes</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="score-grid">
+          <div class="score-card"><span>PEST score</span><strong id="pest-score" aria-live="polite">0/5</strong></div>
+          <div class="notice info" id="pest-message" aria-live="polite">Your score is below 3. Your dermatologist will interpret this alongside your symptoms and examination.</div>
+        </div>
+        <p class="caption">PEST scoring is calculated automatically. A score of 3/5 or more is a positive screen; it is not a diagnosis.</p>
+        <button class="primary-button" type="submit">Submit screening</button>
+        <p class="notice" id="submission-status" role="status" aria-live="polite" hidden></p>
+      </form>
+    </section>
+
+    <section class="tab-panel" id="panel-caspar" role="tabpanel" aria-labelledby="tab-caspar" hidden>
+      <h2>CASPAR and Psoriasis Severity</h2>
+      <p class="caption">Classification support only — CASPAR is not a diagnosis. Scores require clinician interpretation in the appropriate inflammatory musculoskeletal context.</p>
+      <div class="select-wrap">
+        <label class="field-label" for="psoriasis-severity">Psoriasis Severity (local clinic recording)</label>
+        <select class="input" id="psoriasis-severity" name="psoriasis-severity">
+          <option>Not recorded</option>
+          <option>Mild</option>
+          <option>Moderate</option>
+          <option>Severe</option>
+          <option>Clinically relevant to patient</option>
+        </select>
+      </div>
+      <p class="notice info">Interpret CASPAR only in established inflammatory joint, spine, or entheseal disease.</p>
+
+      <h3>CASPAR classification module</h3>
+      <div class="caspar-control">
+        <p class="field-label">Rheumatoid factor result</p>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="rf" value="Negative"> Negative</label>
+          <label class="choice"><input type="radio" name="rf" value="Positive"> Positive</label>
+          <label class="choice"><input type="radio" name="rf" value="Not available" checked> Not available</label>
+        </div>
+      </div>
+      <div class="caspar-control" style="margin-top: 1rem;">
+        <p class="field-label">X-ray: juxta-articular new bone formation</p>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="xray" value="Present"> Present</label>
+          <label class="choice"><input type="radio" name="xray" value="Absent"> Absent</label>
+          <label class="choice"><input type="radio" name="xray" value="Not available" checked> Not available</label>
+        </div>
+      </div>
+      <div class="check-list" style="margin-top: 1rem;">
+        <label class="check-row"><input type="checkbox" id="current-psoriasis"> <span>Current Psoriasis (2 points)</span></label>
+        <label class="check-row"><input type="checkbox" id="personal-psoriasis"> <span>Personal History of Psoriasis (1 point if no Current Psoriasis)</span></label>
+        <label class="check-row"><input type="checkbox" id="family-psoriasis"> <span>Family History of Psoriasis (1 point if no Current/Personal History)</span></label>
+        <label class="check-row"><input type="checkbox" id="nail-dystrophy"> <span>Psoriatic Nail Dystrophy: pitting, onycholysis, or hyperkeratosis (1 point)</span></label>
+        <label class="check-row"><input type="checkbox" id="dactylitis"> <span>Current dactylitis or recorded history (1 point)</span></label>
+      </div>
+
+      <div class="caspar-score" aria-live="polite">
+        <span class="caption" style="margin: 0;">Deterministic CASPAR score</span>
+        <span class="value" id="caspar-score">0 points</span>
+        <span class="message" id="caspar-message">CASPAR point threshold not met</span>
+      </div>
+
+      <div class="test-prompts" id="caspar-test-prompts">
+        <h3>Tests to consider</h3>
+        <p class="caption">Clinician prompts only — this app does not order tests or replace clinical assessment.</p>
+        <ul id="caspar-test-list"></ul>
+      </div>
+
+      <h3>Referral prompt</h3>
+      <div class="notice info" id="referral-message" aria-live="polite">No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.</div>
+      <p class="caption" id="referral-caption" hidden>Decision support only. The clinician remains responsible for the referral decision.</p>
+    </section>
+
+    <section class="tab-panel" id="panel-tests" role="tabpanel" aria-labelledby="tab-tests" hidden>
+      <h2>Tests to consider</h2>
+      <p class="caption">Clinician use only. These are prompts for assessment and local pathways — they are not automatic orders, a diagnosis, or a treatment plan.</p>
+
+      <article class="test-block">
+        <h3>Clinic Standard: Every Patient With Psoriasis</h3>
+        <p>The following are the clinic’s standard assessment tests for all Psoriasis patients.</p>
+        <ul class="test-list">
+          <li><strong>Complete blood count (CBC)</strong></li>
+          <li><strong>Lipid profile</strong></li>
+          <li><strong>Liver function tests (LFT)</strong></li>
+          <li><strong>HbA1c</strong></li>
+        </ul>
+        <p>Add treatment-specific monitoring and any additional investigations according to the dermatologist’s assessment and local protocol.</p>
+      </article>
+
+      <article class="test-block">
+        <h3>Clinic Standard: Suspected Psoriatic Arthritis</h3>
+        <p>The following are added when PsA is suspected.</p>
+        <ul class="test-list">
+          <li><strong>Rheumatoid factor (RF)</strong> — a documented negative result is one CASPAR component; “Not available” is not negative and receives no CASPAR point.</li>
+          <li><strong>C-reactive protein (CRP)</strong></li>
+          <li><strong>Erythrocyte sedimentation rate (ESR)</strong></li>
+          <li><strong>Ultrasound or X-ray</strong>, selected for the clinically relevant symptomatic site.</li>
+        </ul>
+        <p>Normal CRP or ESR does not exclude PsA. Further investigations remain at the dermatologist’s or rheumatologist’s discretion.</p>
+        <p class="notice warning">Prompt rheumatology assessment remains appropriate when PsA is suspected; do not delay referral while waiting for this checklist.</p>
+      </article>
+
+      <p class="caption">The test lists above are a local clinic workflow. Clinical reference context: <a href="https://www.nice.org.uk/guidance/cg153/chapter/recommendations" target="_blank" rel="noreferrer">NICE psoriasis assessment and management</a> and <a href="https://www.nice.org.uk/guidance/ng65/chapter/Recommendations" target="_blank" rel="noreferrer">NICE spondyloarthritis diagnosis and management</a>.</p>
+    </section>
+
+    <footer class="footer-note">Your UHID and screening answers are sent to the clinic's Google Form when the patient submits the PEST screen. Do not enter any other identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.</footer>
+  </main>
+
+  <form id="google-form-transport" action="https://docs.google.com/forms/d/e/1FAIpQLSfnz1KbICaredRCN73tFf3Fvrzc4Wbt-0katp9Q4D5clYLVfw/formResponse" method="post" target="google-form-sink" accept-charset="UTF-8" rel="noreferrer" hidden>
+    <input type="hidden" name="entry.1157237787" id="google-uhid">
+    <input type="hidden" name="entry.920246852" id="google-swollen-joint">
+    <input type="hidden" name="entry.689126709" id="google-doctor-arthritis">
+    <input type="hidden" name="entry.2040305267" id="google-nail-pitting">
+    <input type="hidden" name="entry.1460286880" id="google-heel-pain">
+    <input type="hidden" name="entry.1951837391" id="google-dactylitis-history">
+  </form>
+  <iframe name="google-form-sink" title="Google Form response" hidden aria-hidden="true" tabindex="-1"></iframe>
+
+  <noscript><p style="padding: 1rem; color: #9a2e2e;">This screening page needs JavaScript to calculate scores and send the form.</p></noscript>
+
+  <script>
+    (() => {
+      const screeningForm = document.getElementById('screening-form');
+      const transportForm = document.getElementById('google-form-transport');
+      const scoreNode = document.getElementById('pest-score');
+      const pestMessage = document.getElementById('pest-message');
+      const submissionStatus = document.getElementById('submission-status');
+      const casparScoreNode = document.getElementById('caspar-score');
+      const casparMessage = document.getElementById('caspar-message');
+      const casparTestPrompts = document.getElementById('caspar-test-prompts');
+      const casparTestList = document.getElementById('caspar-test-list');
+      const referralMessage = document.getElementById('referral-message');
+      const referralCaption = document.getElementById('referral-caption');
+      const pestKeys = ['swollen_joint', 'doctor_arthritis', 'nail_pitting', 'heel_pain', 'dactylitis_history'];
+
+      function selectedValue(name) {
+        return document.querySelector(`input[name="${name}"]:checked`)?.value || 'No';
+      }
+
+      function pestScore() {
+        return pestKeys.reduce((total, key) => total + (selectedValue(key) === 'Yes' ? 1 : 0), 0);
+      }
+
+      function casparResult() {
+        const currentPsoriasis = document.getElementById('current-psoriasis').checked;
+        const personalPsoriasis = document.getElementById('personal-psoriasis').checked;
+        const familyPsoriasis = document.getElementById('family-psoriasis').checked;
+        const psoriasisPoints = currentPsoriasis ? 2 : (personalPsoriasis || familyPsoriasis ? 1 : 0);
+        const total = psoriasisPoints
+          + (document.getElementById('nail-dystrophy').checked ? 1 : 0)
+          + (selectedValue('rf') === 'Negative' ? 1 : 0)
+          + (document.getElementById('dactylitis').checked ? 1 : 0)
+          + (selectedValue('xray') === 'Present' ? 1 : 0);
+        return { total, thresholdMet: total >= 3 };
+      }
+
+      function setNotice(node, kind, message) {
+        node.className = `notice ${kind}`;
+        node.textContent = message;
+      }
+
+      function updateReferral() {
+        const pest = pestScore();
+        const caspar = casparResult();
+        const reasons = [];
+        if (pest >= 3) reasons.push(`PEST is positive (${pest}/5; threshold ≥3/5).`);
+        if (caspar.thresholdMet) reasons.push(`CASPAR point threshold is met (${caspar.total} points; threshold ≥3); clinician interpretation is required.`);
+        if (reasons.length) {
+          setNotice(referralMessage, 'success', `Refer to rheumatology for clinician assessment. ${reasons.join(' ')}`);
+          referralCaption.hidden = false;
+        } else {
+          setNotice(referralMessage, 'info', 'No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.');
+          referralCaption.hidden = true;
+        }
+      }
+
+      function updatePest() {
+        const total = pestScore();
+        scoreNode.textContent = `${total}/5`;
+        if (total >= 3) {
+          setNotice(pestMessage, 'warning', 'Your score is 3 or more. Please discuss this with your dermatologist; a rheumatology assessment may be considered.');
+        } else {
+          setNotice(pestMessage, 'info', 'Your score is below 3. Your dermatologist will interpret this alongside your symptoms and examination.');
+        }
+        updateReferral();
+      }
+
+      function updateCaspar() {
+        const result = casparResult();
+        casparScoreNode.textContent = `${result.total} ${result.total === 1 ? 'point' : 'points'}`;
+        casparMessage.textContent = result.thresholdMet
+          ? 'CASPAR point threshold met (≥3); clinician interpretation required'
+          : 'CASPAR point threshold not met';
+
+        const prompts = [];
+        if (selectedValue('rf') === 'Not available') {
+          prompts.push('Rheumatoid factor (RF): record a result if clinically appropriate; a negative RF result contributes to the CASPAR classification score.');
+        }
+        if (selectedValue('xray') === 'Not available') {
+          prompts.push('Plain radiographs of the hands and/or feet: consider only if clinically appropriate; CASPAR counts juxta-articular new bone formation on plain radiographs.');
+        }
+        casparTestList.replaceChildren(...prompts.map((prompt) => {
+          const item = document.createElement('li');
+          item.textContent = prompt;
+          return item;
+        }));
+        casparTestPrompts.hidden = prompts.length === 0;
+        updateReferral();
+      }
+
+      document.querySelectorAll('input[type="radio"]').forEach((input) => input.addEventListener('change', () => {
+        updatePest();
+        updateCaspar();
+      }));
+      document.querySelectorAll('#panel-caspar input[type="checkbox"]').forEach((input) => input.addEventListener('change', updateCaspar));
+
+      screeningForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const uhid = document.getElementById('uhid').value.trim();
+        if (!uhid) {
+          setNotice(submissionStatus, 'error', 'Please enter the UHID before submitting the screening.');
+          submissionStatus.hidden = false;
+          document.getElementById('uhid').focus();
+          return;
+        }
+
+        document.getElementById('google-uhid').value = uhid;
+        document.getElementById('google-swollen-joint').value = selectedValue('swollen_joint');
+        document.getElementById('google-doctor-arthritis').value = selectedValue('doctor_arthritis');
+        document.getElementById('google-nail-pitting').value = selectedValue('nail_pitting');
+        document.getElementById('google-heel-pain').value = selectedValue('heel_pain');
+        document.getElementById('google-dactylitis-history').value = selectedValue('dactylitis_history');
+        transportForm.submit();
+        setNotice(submissionStatus, 'success', 'Your screening has been sent to the clinic response form. Please tell clinic staff if you do not receive the expected next-step advice.');
+        submissionStatus.hidden = false;
+      });
+
+      document.querySelectorAll('[role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
+        const panelId = tab.getAttribute('aria-controls');
+        document.querySelectorAll('[role="tab"]').forEach((otherTab) => {
+          otherTab.setAttribute('aria-selected', String(otherTab === tab));
+        });
+        document.querySelectorAll('.tab-panel').forEach((panel) => {
+          panel.hidden = panel.id !== panelId;
+        });
+      }));
+
+      updatePest();
+      updateCaspar();
+    })();
+  </script>
+</body>
+</html>
