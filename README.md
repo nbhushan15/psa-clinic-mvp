@@ -6,8 +6,9 @@
 
 It keeps the current workflow:
 
-- UHID plus the five PEST answers are sent to the clinic Google Form.
-- CASPAR, Psoriasis Severity, referral prompts, and test prompts remain in the browser and are not sent to Google Forms.
+- The PEST submit button sends the UHID plus the five PEST answers to the clinic Google Form.
+- The CASPAR complete-screening button sends the UHID, the five PEST answers, and a structured CASPAR assessment summary (Psoriasis Severity, criteria selections, RF and X-ray status, deterministic score, and referral prompt) to the same form.
+- The Google Form owner receives a new-response notification by email; clinical details remain in the form response, not the notification email.
 - There is no local SQLite database in the static version.
 
 The Google Form submission uses a browser `POST` to a hidden frame. UHID and answers are therefore not placed in the page URL. A static page cannot read Google’s cross-origin response, so its confirmation means the browser sent the form; it is not an independently verified delivery receipt.

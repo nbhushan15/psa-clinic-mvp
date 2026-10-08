@@ -275,6 +275,9 @@
       <h3>Referral prompt</h3>
       <div class="notice info" id="referral-message" aria-live="polite">No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.</div>
       <p class="caption" id="referral-caption" hidden>Decision support only. The clinician remains responsible for the referral decision.</p>
+      <p class="caption">Submit this only after completing the PEST screen and CASPAR assessment. It sends the UHID, PEST answers, and CASPAR assessment summary to the clinic response form.</p>
+      <button class="primary-button" id="submit-complete-screening" type="button">Submit complete screening (PEST + CASPAR)</button>
+      <p class="notice" id="caspar-submission-status" role="status" aria-live="polite" hidden></p>
     </section>
 
     <section class="tab-panel" id="panel-tests" role="tabpanel" aria-labelledby="tab-tests" hidden>
@@ -310,7 +313,7 @@
       <p class="caption">The test lists above are a local clinic workflow. Clinical reference context: <a href="https://www.nice.org.uk/guidance/cg153/chapter/recommendations" target="_blank" rel="noreferrer">NICE psoriasis assessment and management</a> and <a href="https://www.nice.org.uk/guidance/ng65/chapter/Recommendations" target="_blank" rel="noreferrer">NICE spondyloarthritis diagnosis and management</a>.</p>
     </section>
 
-    <footer class="footer-note">Your UHID and screening answers are sent to the clinic's Google Form when the patient submits the PEST screen. Do not enter any other identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.</footer>
+    <footer class="footer-note">Your UHID and PEST answers are sent to the clinic's Google Form when the PEST screen is submitted. Using the complete-screening button also sends the CASPAR assessment summary. Do not enter any other identifying information. This tool does not diagnose PsA, replace assessment, or autonomously prescribe.</footer>
   </main>
 
   <form id="google-form-transport" action="https://docs.google.com/forms/d/e/1FAIpQLSfnz1KbICaredRCN73tFf3Fvrzc4Wbt-0katp9Q4D5clYLVfw/formResponse" method="post" target="google-form-sink" accept-charset="UTF-8" rel="noreferrer" hidden>
@@ -320,6 +323,7 @@
     <input type="hidden" name="entry.2040305267" id="google-nail-pitting">
     <input type="hidden" name="entry.1460286880" id="google-heel-pain">
     <input type="hidden" name="entry.1951837391" id="google-dactylitis-history">
+    <input type="hidden" name="entry.1846258486" id="google-caspar-summary">
   </form>
   <iframe name="google-form-sink" title="Google Form response" hidden aria-hidden="true" tabindex="-1"></iframe>
 
@@ -332,6 +336,8 @@
       const scoreNode = document.getElementById('pest-score');
       const pestMessage = document.getElementById('pest-message');
       const submissionStatus = document.getElementById('submission-status');
+      const casparSubmissionStatus = document.getElementById('caspar-submission-status');
+      const completeScreeningButton = document.getElementById('submit-complete-screening');
       const casparScoreNode = document.getElementById('caspar-score');
       const casparMessage = document.getElementById('caspar-message');
       const casparTestPrompts = document.getElementById('caspar-test-prompts');
@@ -366,17 +372,31 @@
         node.textContent = message;
       }
 
-      function updateReferral() {
+      function checkboxValue(id) {
+        return document.getElementById(id).checked ? 'Yes' : 'No';
+      }
+
+      function referralState() {
         const pest = pestScore();
         const caspar = casparResult();
         const reasons = [];
         if (pest >= 3) reasons.push(`PEST is positive (${pest}/5; threshold ≥3/5).`);
         if (caspar.thresholdMet) reasons.push(`CASPAR point threshold is met (${caspar.total} points; threshold ≥3); clinician interpretation is required.`);
-        if (reasons.length) {
-          setNotice(referralMessage, 'success', `Refer to rheumatology for clinician assessment. ${reasons.join(' ')}`);
+        return {
+          shouldRefer: reasons.length > 0,
+          message: reasons.length
+            ? `Refer to rheumatology for clinician assessment. ${reasons.join(' ')}`
+            : 'No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.'
+        };
+      }
+
+      function updateReferral() {
+        const referral = referralState();
+        if (referral.shouldRefer) {
+          setNotice(referralMessage, 'success', referral.message);
           referralCaption.hidden = false;
         } else {
-          setNotice(referralMessage, 'info', 'No PEST- or CASPAR-based referral prompt is displayed. Clinical judgement remains essential.');
+          setNotice(referralMessage, 'info', referral.message);
           referralCaption.hidden = true;
         }
       }
@@ -421,26 +441,61 @@
       }));
       document.querySelectorAll('#panel-caspar input[type="checkbox"]').forEach((input) => input.addEventListener('change', updateCaspar));
 
-      screeningForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const uhid = document.getElementById('uhid').value.trim();
-        if (!uhid) {
-          setNotice(submissionStatus, 'error', 'Please enter the UHID before submitting the screening.');
-          submissionStatus.hidden = false;
-          document.getElementById('uhid').focus();
-          return;
-        }
-
+      function writePestResponse(uhid) {
         document.getElementById('google-uhid').value = uhid;
         document.getElementById('google-swollen-joint').value = selectedValue('swollen_joint');
         document.getElementById('google-doctor-arthritis').value = selectedValue('doctor_arthritis');
         document.getElementById('google-nail-pitting').value = selectedValue('nail_pitting');
         document.getElementById('google-heel-pain').value = selectedValue('heel_pain');
         document.getElementById('google-dactylitis-history').value = selectedValue('dactylitis_history');
+      }
+
+      function casparSummary() {
+        const result = casparResult();
+        const referral = referralState();
+        return [
+          'Submission type: Combined PEST + CASPAR',
+          `PEST score: ${pestScore()}/5`,
+          `Psoriasis Severity: ${document.getElementById('psoriasis-severity').value}`,
+          `Current Psoriasis: ${checkboxValue('current-psoriasis')}`,
+          `Personal History of Psoriasis: ${checkboxValue('personal-psoriasis')}`,
+          `Family History of Psoriasis: ${checkboxValue('family-psoriasis')}`,
+          `Psoriatic Nail Dystrophy: ${checkboxValue('nail-dystrophy')}`,
+          `Rheumatoid factor: ${selectedValue('rf')}`,
+          `Dactylitis: ${checkboxValue('dactylitis')}`,
+          `X-ray new bone formation: ${selectedValue('xray')}`,
+          `CASPAR score: ${result.total}/5`,
+          `CASPAR point threshold: ${result.thresholdMet ? 'Met (≥3)' : 'Not met (<3)'}`,
+          `Referral prompt: ${referral.shouldRefer ? 'Refer to rheumatology for clinician assessment.' : 'No PEST- or CASPAR-based referral prompt.'}`
+        ].join('\n');
+      }
+
+      function submitScreening(includeCaspar, statusNode) {
+        const uhid = document.getElementById('uhid').value.trim();
+        if (!uhid) {
+          setNotice(statusNode, 'error', includeCaspar
+            ? 'Please enter the UHID on the Screening tab before submitting the complete screening.'
+            : 'Please enter the UHID before submitting the screening.');
+          statusNode.hidden = false;
+          if (!includeCaspar) document.getElementById('uhid').focus();
+          return;
+        }
+
+        writePestResponse(uhid);
+        document.getElementById('google-caspar-summary').value = includeCaspar ? casparSummary() : '';
         transportForm.submit();
-        setNotice(submissionStatus, 'success', 'Your screening has been sent to the clinic response form. Please tell clinic staff if you do not receive the expected next-step advice.');
-        submissionStatus.hidden = false;
+        setNotice(statusNode, 'success', includeCaspar
+          ? 'Your complete screening has been sent to the clinic response form. Please tell clinic staff if you do not receive the expected next-step advice.'
+          : 'Your screening has been sent to the clinic response form. Please tell clinic staff if you do not receive the expected next-step advice.');
+        statusNode.hidden = false;
+      }
+
+      screeningForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitScreening(false, submissionStatus);
       });
+
+      completeScreeningButton.addEventListener('click', () => submitScreening(true, casparSubmissionStatus));
 
       document.querySelectorAll('[role="tab"]').forEach((tab) => tab.addEventListener('click', () => {
         const panelId = tab.getAttribute('aria-controls');
