@@ -52,14 +52,10 @@
     .clinic-hero h1 { max-width: 31rem; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 6.5vw, 3.65rem); font-weight: 500; letter-spacing: -.05em; line-height: .98; }
     .clinic-hero h1 span { display: block; color: var(--gold); font-style: italic; }
     .hero-subtitle { max-width: 32rem; margin: .82rem 0 0; font-size: .98rem; line-height: 1.52; opacity: .92; }
-    .hero-art { position: relative; width: 9.5rem; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.38); border-radius: 50%; background: rgba(255,255,255,.07); }
-    .hero-art::before, .hero-art::after { position: absolute; border-radius: 50%; content: ""; }
-    .hero-art::before { inset: 1.08rem; border: 1px solid rgba(241,211,125,.9); }
-    .hero-art::after { top: 2.75rem; left: 2.75rem; width: 3.9rem; height: 3.9rem; background: var(--gold); box-shadow: 0 0 0 1rem rgba(241,211,125,.13); }
-    .hero-art .orb { position: absolute; display: block; border-radius: 50%; background: #9cdbdc; box-shadow: 0 0 0 .28rem rgba(156,219,220,.16); }
-    .hero-art .orb-one { top: 1.02rem; right: 1.45rem; width: .55rem; height: .55rem; }
-    .hero-art .orb-two { bottom: 1.45rem; left: 1.1rem; width: .42rem; height: .42rem; }
-    .hero-art .orb-three { right: .76rem; bottom: 2.4rem; width: .34rem; height: .34rem; }
+    .logo-lockup { display: grid; grid-template-columns: repeat(2, 4.25rem); gap: .5rem; justify-self: end; padding: .6rem; border: 1px solid rgba(255,255,255,.28); border-radius: 18px; background: rgba(255,255,255,.1); backdrop-filter: blur(5px); }
+    .logo-tile { display: grid; place-items: center; width: 4.25rem; height: 4.25rem; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 5px 12px rgba(0,0,0,.14); }
+    .logo-tile img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .logo-label { grid-column: 1 / -1; margin: .02rem 0 0; color: rgba(255,255,255,.9); font-size: .6rem; font-weight: 750; letter-spacing: .06em; line-height: 1.3; text-align: center; text-transform: uppercase; }
     .global-note, .footer-note { margin: .9rem 0 1.1rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 
     .tab-list { display: flex; gap: .2rem; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
@@ -119,7 +115,7 @@
       .app-shell { width: min(100% - 1.25rem, 800px); padding-top: .7rem; }
       .clinic-hero { padding: 1.35rem 1.2rem; border-radius: 17px; }
       .hero-content { grid-template-columns: 1fr; }
-      .hero-art { display: none; }
+      .logo-lockup { justify-self: start; }
       .score-grid { grid-template-columns: 1fr; }
       .question-card { grid-template-columns: 2rem 1fr; padding: .82rem; }
     }
@@ -131,17 +127,17 @@
       <div class="hero-content">
         <div>
           <p class="institution">Father Muller Medical College</p>
-          <p class="departments">Departments of Dermatology &amp; Rheumatology</p>
+          <p class="departments">Department of Dermatology &bull; Department of Rheumatology</p>
           <div class="hero-rule"></div>
           <p class="presents">present</p>
           <p class="week-label">PSORIASIS WEEK</p>
           <h1>Look Beyond <span>Your Skin</span></h1>
           <p class="hero-subtitle">A short Psoriatic Arthritis screening questionnaire for people with Psoriasis.</p>
         </div>
-        <div class="hero-art" aria-hidden="true">
-          <span class="orb orb-one"></span>
-          <span class="orb orb-two"></span>
-          <span class="orb orb-three"></span>
+        <div class="logo-lockup" aria-label="Father Muller Medical College emblems">
+          <div class="logo-tile"><img src="assets/father-muller-portrait.jpg" alt="Father Muller portrait emblem"></div>
+          <div class="logo-tile"><img src="assets/father-muller-crest.jpg" alt="Father Muller Medical College crest"></div>
+          <p class="logo-label">Father Muller Medical College</p>
         </div>
       </div>
     </header>
