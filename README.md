@@ -8,6 +8,7 @@ It keeps the current workflow:
 
 - The PEST submit button sends the UHID plus the five PEST answers to the clinic Google Form.
 - The CASPAR complete-screening button sends the UHID, the five PEST answers, and a structured CASPAR assessment summary (Psoriasis Severity, criteria selections, RF and X-ray status, deterministic score, and referral prompt) to the same form.
+- Use the CASPAR complete-screening button instead of the PEST-only button when one combined record is wanted; using both buttons intentionally creates two form responses.
 - The Google Form owner receives a new-response notification by email; clinical details remain in the form response, not the notification email.
 - There is no local SQLite database in the static version.
 
