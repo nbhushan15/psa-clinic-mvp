@@ -43,19 +43,19 @@
     .app-shell { width: min(100% - 2rem, 840px); margin: 0 auto; padding: 1.5rem 0 3rem; }
     .clinic-hero { position: relative; overflow: hidden; border-radius: 22px; background: radial-gradient(circle at 87% 13%, rgba(128, 211, 214, .34), transparent 25%), linear-gradient(135deg, #0a4d5b 0%, #0d5967 58%, #0b6e78 100%); color: #fff; padding: clamp(1.45rem, 4vw, 2.4rem); box-shadow: 0 18px 44px rgba(11, 72, 82, .18); }
     .clinic-hero::after { position: absolute; right: -7rem; bottom: -8rem; width: 22rem; height: 22rem; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; content: ""; }
-    .hero-content { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) 10rem; gap: 1.25rem; align-items: center; }
+    .hero-content { position: relative; z-index: 1; padding: .35rem 5.35rem; text-align: center; }
     .institution { margin: 0; font-size: .71rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; opacity: .9; }
-    .departments { max-width: 34rem; margin: .5rem 0 0; font-size: .86rem; font-weight: 550; line-height: 1.45; opacity: .92; }
-    .hero-rule { width: 3.1rem; height: 2px; margin: 1.15rem 0 .82rem; background: var(--gold); }
+    .departments { max-width: 34rem; margin: .5rem auto 0; font-size: .86rem; font-weight: 550; line-height: 1.45; opacity: .92; }
+    .hero-rule { width: 3.1rem; height: 2px; margin: 1.15rem auto .82rem; background: var(--gold); }
     .presents { margin: 0 0 .4rem; font-size: .75rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; opacity: .8; }
     .week-label { display: inline-block; margin: 0 0 .55rem; padding: .3rem .56rem; border-radius: 999px; background: var(--gold-soft); color: #725711; font-size: .72rem; font-weight: 850; letter-spacing: .08em; }
-    .clinic-hero h1 { max-width: 31rem; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 6.5vw, 3.65rem); font-weight: 500; letter-spacing: -.05em; line-height: .98; }
+    .clinic-hero h1 { max-width: 31rem; margin: 0 auto; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 6.5vw, 3.65rem); font-weight: 500; letter-spacing: -.05em; line-height: .98; }
     .clinic-hero h1 span { display: block; color: var(--gold); font-style: italic; }
-    .hero-subtitle { max-width: 32rem; margin: .82rem 0 0; font-size: .98rem; line-height: 1.52; opacity: .92; }
-    .logo-lockup { display: grid; grid-template-columns: repeat(2, 4.25rem); gap: .5rem; justify-self: end; padding: .6rem; border: 1px solid rgba(255,255,255,.28); border-radius: 18px; background: rgba(255,255,255,.1); backdrop-filter: blur(5px); }
-    .logo-tile { display: grid; place-items: center; width: 4.25rem; height: 4.25rem; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 5px 12px rgba(0,0,0,.14); }
-    .logo-tile img { display: block; width: 100%; height: 100%; object-fit: contain; }
-    .logo-label { grid-column: 1 / -1; margin: .02rem 0 0; color: rgba(255,255,255,.9); font-size: .6rem; font-weight: 750; letter-spacing: .06em; line-height: 1.3; text-align: center; text-transform: uppercase; }
+    .hero-subtitle { max-width: 32rem; margin: .82rem auto 0; font-size: .98rem; line-height: 1.52; opacity: .92; }
+    .corner-logo { position: absolute; z-index: 2; top: 1.15rem; display: grid; place-items: center; width: 4.6rem; height: 4.6rem; overflow: hidden; padding: .23rem; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; background: #fff; box-shadow: 0 7px 18px rgba(0,0,0,.18); }
+    .corner-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .corner-logo.left { left: 1.15rem; }
+    .corner-logo.right { right: 1.15rem; }
     .global-note, .footer-note { margin: .9rem 0 1.1rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 
     .tab-list { display: flex; gap: .2rem; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
@@ -114,8 +114,10 @@
     @media (max-width: 600px) {
       .app-shell { width: min(100% - 1.25rem, 800px); padding-top: .7rem; }
       .clinic-hero { padding: 1.35rem 1.2rem; border-radius: 17px; }
-      .hero-content { grid-template-columns: 1fr; }
-      .logo-lockup { justify-self: start; }
+      .hero-content { padding: 4.2rem .15rem .1rem; }
+      .corner-logo { top: .8rem; width: 3.3rem; height: 3.3rem; border-radius: 11px; }
+      .corner-logo.left { left: .8rem; }
+      .corner-logo.right { right: .8rem; }
       .score-grid { grid-template-columns: 1fr; }
       .question-card { grid-template-columns: 2rem 1fr; padding: .82rem; }
     }
@@ -124,6 +126,8 @@
 <body>
   <main class="app-shell">
     <header class="clinic-hero">
+      <div class="corner-logo left"><img src="assets/father-muller-portrait.jpg" alt="Father Muller portrait emblem"></div>
+      <div class="corner-logo right"><img src="assets/father-muller-crest.jpg" alt="Father Muller Medical College crest"></div>
       <div class="hero-content">
         <div>
           <p class="institution">Father Muller Medical College</p>
@@ -133,11 +137,6 @@
           <p class="week-label">PSORIASIS WEEK</p>
           <h1>Look Beyond <span>Your Skin</span></h1>
           <p class="hero-subtitle">A short Psoriatic Arthritis screening questionnaire for people with Psoriasis.</p>
-        </div>
-        <div class="logo-lockup" aria-label="Father Muller Medical College emblems">
-          <div class="logo-tile"><img src="assets/father-muller-portrait.jpg" alt="Father Muller portrait emblem"></div>
-          <div class="logo-tile"><img src="assets/father-muller-crest.jpg" alt="Father Muller Medical College crest"></div>
-          <p class="logo-label">Father Muller Medical College</p>
         </div>
       </div>
     </header>
@@ -289,6 +288,7 @@
           <li><strong>Complete blood count (CBC)</strong></li>
           <li><strong>Lipid profile</strong></li>
           <li><strong>Liver function tests (LFT)</strong></li>
+          <li><strong>Renal function tests (RFT)</strong></li>
           <li><strong>HbA1c</strong></li>
         </ul>
         <p>Add treatment-specific monitoring and any additional investigations according to the dermatologist’s assessment and local protocol.</p>
