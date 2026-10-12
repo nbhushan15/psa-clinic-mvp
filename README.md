@@ -25,3 +25,7 @@ Keep the existing Streamlit version live until the GitHub Pages page has been ch
 ## Local preview
 
 Open `index.html` in a modern browser, or serve this folder with any simple local web server. Do not use patient identifiers while testing.
+
+## Campaign poster
+
+`assets/look-beyond-your-skin-poster.png` is a print-ready A4 poster (300 dpi) with the Father Muller emblems and a QR code for the public screening page. To regenerate it on macOS, install `qrcode[pil]` and run `python3 scripts/create_campaign_poster.py`.
